@@ -1,7 +1,7 @@
 ##Plans for bikeshare project kickoff:
 
 ### What is kaggle? 
-* Ryan and maybe Paul and maybe this video: https://www.youtube.com/watch?v=PoD84TVdD-4#t=31
+* Ryan and maybe Paul and maybe this video: https://www.youtube.com/watch?v=PoD84TVdD-4
 
 ### Pitch the challenge
 * Adventure!

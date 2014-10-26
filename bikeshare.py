@@ -4,7 +4,8 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.externals import joblib
 
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
@@ -22,8 +23,6 @@ class bikeshareTrainer:
         self.y_casual = self.df.values[:,-3]
         self.y_registered = self.df.values[:,-2]
         self.y_total = self.df.values[:,-1]
-        
-        self.casual_model , self.registered_model = self.train()
         
     def prepX(self):
         # Takes advantage of separate date variables
@@ -47,26 +46,33 @@ class bikeshareTrainer:
         # Entire data matrix
         return np.column_stack((cat_data, numerical_data))
 
-    def trainTestPredict(self):
+    def trainTestPredict(self, model):
         # train test splitting
-        X_train, X_test, y_casual_train, y_casual_test, y_registered_train, y_registered_test, y_total_train, y_total_test = train_test_split(X, 
+        X_train, X_test, y_casual_train, y_casual_test, y_registered_train, y_registered_test, y_total_train, y_total_test = train_test_split(self.X, 
                                                                                                                                               self.y_casual, 
                                                                                                                                               self.y_registered, 
                                                                                                                                               self.y_total, 
                                                                                                                                               test_size = 0.3)
 
-        # TODO: Should these stay local or be class variables or??
-        # instantiate RF regressors for casual and registered bikers
-        rf_casual = RandomForestRegressor(n_jobs=-1)
-        rf_registered = RandomForestRegressor(n_jobs=-1)
+        if model == "RF":
+            # instantiate RF regressors for casual and registered bikers
+            model_casual = RandomForestRegressor(n_jobs=-1)
+            model_registered = RandomForestRegressor(n_jobs=-1)
+        elif model == "AdaBoost":
+            # instantiate AdaBoost regressors for casual and registered bikers
+            model_casual = AdaBoostRegressor(n_estimators = 500)
+            model_registered = AdaBoostRegressor(n_estimators = 500)
+        elif model == "KNN":
+            model_casual = KNeighborsRegressor(weights='distance')
+            model_registered = KNeighborsRegressor(weights='distance')
 
         # fitting for the casual and registered bikers
-        rf_casual.fit(X_train, y_casual_train)
-        rf_registered.fit(X_train, y_registered_train)
+        model_casual.fit(X_train, y_casual_train)
+        model_registered.fit(X_train, y_registered_train)
 
         # predictions for the casual and registered bikers
-        y_casual_pred = rf_casual.predict(X_test)
-        y_registered_pred = rf_registered.predict(X_test)
+        y_casual_pred = model_casual.predict(X_test)
+        y_registered_pred = model_registered.predict(X_test)
 
         # total predictions is predicted # of casual bikers + predicted # of registered bikers 
         y_total_pred = y_casual_pred + y_registered_pred
@@ -79,12 +85,20 @@ class bikeshareTrainer:
         print "MAE for bikes rented per hour by registered riders: {}".format(np.mean(np.abs(y_registered_pred - y_registered_test)))
         print "MAE for bikes rented per hour by all riders: {}".format(np.mean(np.abs(y_total_pred - y_total_test)))
 
-        return rf_casual, rf_registered
+        return model_casual, model_registered
 
-    def train(self):
-        # instantiate RF regressors for casual and registered bikers
-        model_casual = RandomForestRegressor(n_jobs=-1)
-        model_registered = RandomForestRegressor(n_jobs=-1)
+    def train(self, model):
+        if model == "RF":
+            # instantiate RF regressors for casual and registered bikers
+            model_casual = RandomForestRegressor(n_jobs=-1)
+            model_registered = RandomForestRegressor(n_jobs=-1)
+        elif model == "AdaBoost":
+            # instantiate AdaBoost regressors for casual and registered bikers
+            model_casual = AdaBoostRegressor(n_estimators = 500)
+            model_registered = AdaBoostRegressor(n_estimators = 500)
+        elif model == "KNN":
+            model_casual = KNeighborsRegressor()
+            model_registered = KNeighborsRegressor()
 
         # fitting for the casual and registered bikers
         model_casual.fit(self.X, self.y_casual)
@@ -120,7 +134,7 @@ class bikeshareTester(bikeshareTrainer):
         self.y_total_pred = [int(x) for x in self.y_total_pred]
 
     def prepForSubmit(self):
-        with open("submission1.csv", 'w') as csvfile:
+        with open("submission2.csv", 'w') as csvfile:
             # Writes results to a csv which can be submitted to kaggle
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(['datetime','count'])

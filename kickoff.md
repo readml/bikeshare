@@ -1,7 +1,7 @@
 ##Plans for bikeshare project kickoff:
 
 ### What is kaggle? 
-* Ryan and maybe Paul and maybe this video: https://www.youtube.com/watch?v=PoD84TVdD-4#t=31
+* Ryan and maybe Paul and maybe this video: https://www.youtube.com/watch?v=PoD84TVdD-4
 
 ### Pitch the challenge
 * Adventure!
@@ -24,3 +24,10 @@
 * Take ownership of your project and have fun with it. :)
 * At the end: Everyone shares the cool stuff they did! :D celebrate it
 * Keep tabs / check-in on groups. Every week: sign up on the board to discuss/get help?
+
+###About the next couple of weeks
+* LEARNSHARE on Nov 11! We'll come together to celebrate all the cool data sciencey/ML things. Make icals!
+* Otherwise, DoML time should be open project time! 
+* We'll be around - you can sign up to discuss/ask questions. 
+* Any language/OS. you get to pick!
+* (for navigators) Less is more! We shouldn't throw too much information or implementation suggestions at them. Let them explore on their own and become motivated to gain EXP and level up. :)
